@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Uzair Elahi — Divine Studio</title>
+<meta name="description" content="Uzair Elahi. Websites, graphics, ads, video editing and photoshoots — crafted like light.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;500;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,500&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<style>
+:root{
+  --bg:#050508; --ink:#0a0a12;
+  --bone:#efe9df; --dim:#7d7a86;
+  --gold:#e8c46b; --violet:#8b7bff; --rose:#ff7ab8; --cyan:#7be8ff;
+  --fd:'Unbounded',sans-serif; --fs:'Cormorant Garamond',serif; --fm:'Space Grotesk',sans-serif;
+  --pad:clamp(20px,5vw,72px);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{background:var(--bg);scroll-behavior:smooth}
+body{color:var(--bone);font-family:var(--fm);overflow-x:hidden;background:var(--bg)}
+body.lock{overflow:hidden}
+::selection{background:var(--gold);color:var(--bg)}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit}
+:focus-visible{outline:2px solid var(--gold);outline-offset:4px}
+
+/* ---------- ambient layers ---------- */
+#aurora{position:fixed;inset:0;z-index:0;width:100%;height:100%}
+#stars{position:fixed;inset:0;z-index:1;width:100%;height:100%;pointer-events:none}
+.grain{position:fixed;inset:-50%;z-index:60;pointer-events:none;opacity:.07;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grain 8s steps(10) infinite}
+@keyframes grain{0%,100%{transform:translate(0,0)}20%{transform:translate(-4%,3%)}40%{transform:translate(3%,-5%)}60%{transform:translate(-3%,4%)}80%{transform:translate(4%,-2%)}}
+main{position:relative;z-index:2}
+
+/* ---------- preloader ---------- */
+#ld{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;transition:opacity .9s ease,visibility .9s}
+#ld.gone{opacity:0;visibility:hidden}
+#ld .halo{position:absolute;width:52vmin;height:52vmin;border-radius:50%;filter:blur(60px);
+  background:radial-gradient(circle,rgba(139,123,255,.35),rgba(255,122,184,.12) 55%,transparent 70%);
+  animation:breathe 3s ease-in-out infinite}
+@keyframes breathe{50%{transform:scale(1.15);opacity:.7}}
+#ld p{font:300 clamp(13px,2vw,16px)/1 var(--fm);letter-spacing:.5em;text-transform:uppercase;color:var(--dim)}
+#ld b{font:900 clamp(72px,18vw,220px)/1 var(--fd);background:linear-gradient(100deg,var(--bone) 20%,var(--gold) 50%,var(--bone) 80%);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sheen 1.6s linear infinite}
+@keyframes sheen{to{background-position:-200% 0}}
+
+/* ---------- cursor ---------- */
+#cur{position:fixed;left:0;top:0;z-index:90;pointer-events:none;will-change:transform}
+#cur .orb{position:absolute;left:-7px;top:-7px;width:14px;height:14px;border-radius:50%;
+  background:radial-gradient(circle at 30% 30%,#fff,var(--gold) 60%,transparent 75%);
+  box-shadow:0 0 24px 6px rgba(232,196,107,.55)}
+#cur .ring{position:absolute;left:-26px;top:-26px;width:52px;height:52px;border-radius:50%;border:1px solid rgba(232,196,107,.5);transition:transform .35s cubic-bezier(.2,.8,.2,1),border-color .3s}
+#cur.hot .ring{transform:scale(1.9);border-color:rgba(232,196,107,.9)}
+#cur.hot .orb{box-shadow:0 0 40px 12px rgba(232,196,107,.8)}
+@media(hover:none){#cur{display:none}}
+@media(hover:hover) and (pointer:fine){body,a,button{cursor:none}}
+
+/* ---------- nav ---------- */
+nav{position:fixed;inset:0 0 auto 0;z-index:50;display:flex;justify-content:space-between;align-items:center;
+  padding:26px var(--pad);mix-blend-mode:difference}
+nav .logo{font:700 15px/1 var(--fd);letter-spacing:.35em;text-transform:uppercase}
+nav .links{display:flex;gap:clamp(14px,3vw,40px);font:400 12px/1 var(--fm);letter-spacing:.25em;text-transform:uppercase}
+nav .links a{position:relative;padding:6px 0}
+nav .links a::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:1px;background:var(--bone);transform:scaleX(0);transform-origin:100% 50%;transition:transform .45s cubic-bezier(.7,0,.2,1)}
+nav .links a:hover::after{transform:scaleX(1);transform-origin:0 50%}
+@media(max-width:640px){nav .links{display:none}}
+
+/* ---------- hero ---------- */
+.hero{position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding:0 var(--pad);overflow:hidden}
+.hero .halo1,.hero .halo2{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none}
+.halo1{width:60vmin;height:60vmin;right:-12vmin;top:8vh;background:radial-gradient(circle,rgba(139,123,255,.30),transparent 70%)}
+.halo2{width:50vmin;height:50vmin;left:-14vmin;bottom:6vh;background:radial-gradient(circle,rgba(255,122,184,.22),transparent 70%)}
+.eyebrow{display:flex;align-items:center;gap:16px;font:400 12px/1 var(--fm);letter-spacing:.45em;text-transform:uppercase;color:var(--gold)}
+.eyebrow::before{content:"";width:56px;height:1px;background:linear-gradient(90deg,transparent,var(--gold))}
+.hero h1{margin-top:3.5vh;font-weight:700;text-transform:uppercase}
+.hero h1 .ln{display:block;overflow:hidden}
+.hero h1 .ln span{display:inline-block;font:700 clamp(52px,12.5vw,190px)/1.02 var(--fd);letter-spacing:-.01em;will-change:transform}
+.hero h1 .ln .thin{font-weight:300;font-family:var(--fs);font-style:italic;text-transform:none;font-size:clamp(58px,13.5vw,205px);letter-spacing:0}
+.hero h1 .ln .chrome{background:linear-gradient(105deg,var(--bone) 10%,#fff 32%,var(--gold) 50%,var(--bone) 68%,var(--dim) 95%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sheen 6s ease-in-out infinite}
+.hero .sub{margin-top:4.5vh;max-width:46ch;font:italic 500 clamp(19px,2.4vw,27px)/1.45 var(--fs);color:var(--dim)}
+.hero .cta{margin-top:5.5vh;display:inline-flex;width:max-content;gap:18px;align-items:center;font:500 13px/1 var(--fm);letter-spacing:.3em;text-transform:uppercase;color:var(--bone);position:relative;padding-bottom:10px}
+.hero .cta i{width:44px;height:1px;background:var(--gold);transition:width .5s cubic-bezier(.7,0,.2,1)}
+.hero .cta:hover i{width:84px}
+.scroll-hint{position:absolute;bottom:34px;left:var(--pad);display:flex;align-items:center;gap:14px;font:400 11px/1 var(--fm);letter-spacing:.4em;text-transform:uppercase;color:var(--dim)}
+.scroll-hint b{display:block;width:1px;height:56px;background:linear-gradient(var(--gold),transparent);animation:drop 2s cubic-bezier(.7,0,.2,1) infinite;transform-origin:top}
+@keyframes drop{0%{transform:scaleY(0)}55%{transform:scaleY(1)}100%{transform:scaleY(1);opacity:0}}
+
+/* ---------- marquee ribbon ---------- */
+.ribbon{position:relative;margin:8vh 0 0;overflow:hidden;border-top:1px solid rgba(239,233,223,.12);border-bottom:1px solid rgba(239,233,223,.12);padding:20px 0}
+.ribbon .tr{display:flex;width:max-content;will-change:transform;gap:0}
+.ribbon .tr span{white-space:nowrap;font:300 clamp(30px,5.5vw,72px)/1.15 var(--fd);text-transform:uppercase;padding-right:.6em}
+.ribbon .tr span em{font:italic 500 1em var(--fs);text-transform:none;color:var(--gold)}
+
+/* ---------- sections common ---------- */
+.sec{padding:16vh var(--pad) 6vh}
+.kicker{display:flex;align-items:center;gap:16px;font:400 11px/1 var(--fm);letter-spacing:.45em;text-transform:uppercase;color:var(--gold)}
+.kicker::before{content:"";width:56px;height:1px;background:linear-gradient(90deg,transparent,var(--gold))}
+.sec h2{margin-top:3vh;font:700 clamp(38px,8vw,120px)/1.02 var(--fd);text-transform:uppercase;letter-spacing:-.01em}
+.sec h2 em{font:italic 500 1em var(--fs);text-transform:none;color:transparent;-webkit-text-stroke:1px var(--gold)}
+
+/* ---------- manifesto ---------- */
+.mani p{margin-top:6vh;max-width:24em;font:italic 500 clamp(26px,4.2vw,54px)/1.3 var(--fs);color:var(--bone)}
+.mani .w{display:inline-block;will-change:transform,opacity}
+.mani .gd{background:linear-gradient(100deg,var(--gold),var(--rose));-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* ---------- services: liquid rows ---------- */
+.svc .row{position:relative;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:clamp(16px,3vw,48px);
+  padding:clamp(22px,3.4vw,44px) 8px;border-bottom:1px solid rgba(239,233,223,.12);overflow:hidden;isolation:isolate}
+.svc .row::before{content:"";position:absolute;left:0;bottom:0;width:100%;height:100%;z-index:-1;
+  background:radial-gradient(120% 200% at var(--lx,50%) 110%,var(--fill,rgba(139,123,255,.28)),transparent 60%);
+  opacity:0;transition:opacity .5s}
+.svc .row:hover::before{opacity:1}
+.svc .row:first-of-type{border-top:1px solid rgba(239,233,223,.12)}
+.svc .num{font:300 12px/1 var(--fm);letter-spacing:.3em;color:var(--dim)}
+.svc .name{font:500 clamp(30px,6.5vw,96px)/1 var(--fd);text-transform:uppercase;letter-spacing:-.01em;transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+.svc .row:hover .name{transform:translateX(2.2vw)}
+.svc .desc{font:italic 400 clamp(15px,1.6vw,20px)/1.35 var(--fs);color:var(--dim);max-width:24ch;text-align:right}
+@media(max-width:700px){.svc .row{grid-template-columns:auto 1fr}.svc .desc{display:none}}
+.svc .name .ch{display:inline-block;will-change:transform}
+
+/* ---------- process: constellation ---------- */
+.proc .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:clamp(18px,2.5vw,34px);margin-top:8vh}
+.step{position:relative;padding:34px 22px 30px;border:1px solid rgba(239,233,223,.14);background:rgba(10,10,18,.45);backdrop-filter:blur(8px);
+  transition:border-color .4s,transform .5s cubic-bezier(.2,.8,.2,1)}
+.step:hover{border-color:var(--gold);transform:translateY(-10px)}
+.step .glyph{width:34px;height:34px;border-radius:50%;border:1px solid var(--gold);position:relative;margin-bottom:22px}
+.step .glyph::after{content:"";position:absolute;inset:9px;border-radius:50%;background:radial-gradient(circle,var(--gold),transparent 70%);animation:pulse 2.6s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.5);opacity:.4}}
+.step em{font:400 11px/1 var(--fm);letter-spacing:.35em;color:var(--dim);font-style:normal;text-transform:uppercase}
+.step b{display:block;margin:10px 0 12px;font:700 clamp(20px,2.4vw,30px)/1.05 var(--fd);text-transform:uppercase}
+.step p{font:italic 400 17px/1.4 var(--fs);color:var(--dim)}
+
+/* ---------- about: portrait orbit ---------- */
+.about{display:grid;gap:clamp(30px,6vw,90px);align-items:center}
+@media(min-width:880px){.about{grid-template-columns:.9fr 1.1fr}}
+.orbital{position:relative;aspect-ratio:4/5;max-width:440px;width:100%;margin:0 auto}
+.orbital .glow{position:absolute;inset:12%;border-radius:50%;filter:blur(70px);background:radial-gradient(circle,rgba(232,196,107,.28),rgba(139,123,255,.18) 60%,transparent 75%)}
+.orbital .frame{position:absolute;inset:6%;border:1px solid rgba(232,196,107,.4);border-radius:200px 200px 24px 24px;overflow:hidden;background:#0c0c14;transform-style:preserve-3d;will-change:transform}
+.orbital .frame::after{content:"";position:absolute;inset:0;background:linear-gradient(160deg,rgba(255,255,255,.16),transparent 40%)}
+.orbital img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.15) brightness(.85)}
+.orbital .noimg{position:absolute;inset:0;display:grid;place-items:center;font:700 clamp(80px,16vw,150px)/1 var(--fd);background:linear-gradient(140deg,#14141f,#0a0a12);color:transparent;-webkit-text-stroke:1px rgba(232,196,107,.7)}
+.orbital .ringtxt{position:absolute;inset:-4%;animation:spin 26s linear infinite;pointer-events:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.orbital .ringtxt text{font:400 11px var(--fm);letter-spacing:.42em;fill:var(--dim);text-transform:uppercase}
+.about .bio{margin-top:4vh;font:italic 500 clamp(20px,2.4vw,28px)/1.45 var(--fs);color:var(--dim);max-width:34em}
+.about .bio b{color:var(--bone);font-weight:600}
+
+/* ---------- contact ---------- */
+.contact{text-align:center;padding-bottom:10vh}
+.contact h2{margin-left:auto;margin-right:auto}
+.mail{display:inline-block;margin-top:7vh;font:500 clamp(22px,5.6vw,84px)/1.1 var(--fd);word-break:break-all;position:relative}
+.mail::after{content:"";position:absolute;left:0;bottom:-8px;width:100%;height:2px;background:linear-gradient(90deg,var(--gold),var(--rose),var(--violet));transform:scaleX(0);transform-origin:0 50%;transition:transform .6s cubic-bezier(.7,0,.2,1)}
+.mail:hover::after{transform:scaleX(1)}
+.copybtn{margin-top:5vh;padding:18px 42px;border:1px solid rgba(232,196,107,.6);background:transparent;color:var(--bone);
+  font:500 13px/1 var(--fm);letter-spacing:.35em;text-transform:uppercase;cursor:pointer;position:relative;overflow:hidden;transition:color .4s}
+.copybtn::before{content:"";position:absolute;inset:0;background:linear-gradient(100deg,var(--gold),var(--rose));transform:translateY(101%);transition:transform .5s cubic-bezier(.7,0,.2,1);z-index:-1}
+.copybtn:hover::before{transform:none}
+.copybtn:hover{color:var(--bg)}
+#toast{position:fixed;left:50%;bottom:40px;transform:translate(-50%,180%);z-index:95;padding:14px 30px;background:var(--bone);color:var(--bg);
+  font:500 12px/1 var(--fm);letter-spacing:.3em;text-transform:uppercase;transition:transform .5s cubic-bezier(.3,1.4,.4,1)}
+#toast.on{transform:translate(-50%,0)}
+footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:30px var(--pad) 44px;color:var(--dim);font:300 12px/1.5 var(--fm);letter-spacing:.2em;text-transform:uppercase}
+footer span b{color:var(--gold);font-weight:400}
+.rev{opacity:0;transform:translateY(60px)}
+</style>
+</head>
+<body class="lock">
+<canvas id="aurora"></canvas>
+<canvas id="stars"></canvas>
+<div class="grain"></div>
+<div id="cur"><div class="ring"></div><div class="orb"></div></div>
+<div id="ld"><div class="halo"></div><b>UE</b><p>Divine Studio</p></div>
+<div id="toast">Email copied</div>
+
+<nav>
+  <a class="logo" href="#top">Uzair&nbsp;Elahi</a>
+  <div class="links">
+    <a href="#services">Work</a><a href="#process">Process</a><a href="#about">About</a><a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<main id="top">
+  <header class="hero">
+    <div class="halo1"></div><div class="halo2"></div>
+    <p class="eyebrow rev">Portfolio · Est. 2022</p>
+    <h1>
+      <span class="ln"><span class="rev">Crafting</span></span>
+      <span class="ln"><span class="thin rev">divine</span></span>
+      <span class="ln"><span class="chrome rev">Experiences</span></span>
+    </h1>
+    <p class="sub rev">Websites, graphics, ads, video and photos — one creator, the entire pipeline, made to stop the scroll.</p>
+    <a class="cta rev" href="#contact">Start a project <i></i></a>
+    <div class="scroll-hint"><b></b>Scroll</div>
+  </header>
+
+  <div class="ribbon" aria-hidden="true"><div class="tr" id="rb1"></div><div class="tr" id="rb2"></div></div>
+
+  <section class="sec mani">
+    <p class="kicker rev">Manifesto</p>
+    <p id="maniTxt">I build things that feel <span class="gd">alive</span> — light, motion and story woven into every pixel.</p>
+  </section>
+
+  <section class="sec svc" id="services">
+    <p class="kicker rev">Services</p>
+    <h2 class="rev">What I <em>make</em></h2>
+    <div style="margin-top:7vh">
+      <a class="row" style="--fill:rgba(139,123,255,.30)" href="#contact"><span class="num">01</span><span class="name" data-txt="Websites"></span><span class="desc">Fast, animated sites that feel alive on every screen.</span></a>
+      <a class="row" style="--fill:rgba(255,122,184,.28)" href="#contact"><span class="num">02</span><span class="name" data-txt="Graphics"></span><span class="desc">Logos, posters, social kits and full brand systems.</span></a>
+      <a class="row" style="--fill:rgba(123,232,255,.26)" href="#contact"><span class="num">03</span><span class="name" data-txt="Ads"></span><span class="desc">Creatives engineered for reels, stories and banners.</span></a>
+      <a class="row" style="--fill:rgba(232,196,107,.28)" href="#contact"><span class="num">04</span><span class="name" data-txt="Video Editing"></span><span class="desc">Reels, promos and long cuts cut to a rhythm.</span></a>
+      <a class="row" style="--fill:rgba(255,122,184,.26)" href="#contact"><span class="num">05</span><span class="name" data-txt="Photoshoots"></span><span class="desc">Product, portrait and event shoots ready to post.</span></a>
+    </div>
+  </section>
+
+  <section class="sec proc" id="process">
+    <p class="kicker rev">Process</p>
+    <h2 class="rev">How it <em>flows</em></h2>
+    <div class="steps">
+      <div class="step rev"><div class="glyph"></div><em>Phase 01</em><b>Brief</b><p>You share the goal, the audience and the deadline.</p></div>
+      <div class="step rev"><div class="glyph"></div><em>Phase 02</em><b>Concept</b><p>I pitch a direction — mood, type, colour, references.</p></div>
+      <div class="step rev"><div class="glyph"></div><em>Phase 03</em><b>Create</b><p>Design, code, shoot or film — the idea takes form.</p></div>
+      <div class="step rev"><div class="glyph"></div><em>Phase 04</em><b>Refine</b><p>Motion, colour and sound polished until it feels right.</p></div>
+      <div class="step rev"><div class="glyph"></div><em>Phase 05</em><b>Deliver</b><p>Every file, every size, ready to publish.</p></div>
+    </div>
+  </section>
+
+  <section class="sec about" id="about">
+    <div class="orbital rev">
+      <div class="glow"></div>
+      <svg class="ringtxt" viewBox="0 0 100 100"><defs><path id="cir" d="M50,50 m-46,0 a46,46 0 1,1 92,0 a46,46 0 1,1 -92,0"/></defs><text><textPath href="#cir">ONE CREATOR · ENTIRE PIPELINE · IDEA TO FINAL FILE · </textPath></text></svg>
+      <div class="frame" id="tiltFrame">
+        <img id="pimg" alt="Uzair Elahi">
+        <div class="noimg" id="noimg">UE</div>
+      </div>
+    </div>
+    <div>
+      <p class="kicker rev">About</p>
+      <h2 class="rev">One person.<br>The <em>whole</em> pipeline.</h2>
+      <p class="bio rev">I design the brand, build the website, cut the video and shoot the photos. <b>One creative, zero hand-offs</b> — from the first sketch to the final export.</p>
+    </div>
+  </section>
+
+  <section class="sec contact" id="contact">
+    <p class="kicker rev" style="justify-content:center">Contact</p>
+    <h2 class="rev">Let's make it <em>divine</em></h2>
+    <a class="mail rev" href="mailto:uzairelahi000@gmail.com">uzairelahi000@gmail.com</a><br>
+    <button class="copybtn rev" id="cp" type="button">Copy email</button>
+  </section>
+
+  <footer>
+    <span>© 2026 <b>Uzair Elahi</b></span>
+    <span>Crafting divine experiences</span>
+    <span>Made with light &amp; motion</span>
+  </footer>
+</main>
+
+<script>
+(function(){
+"use strict";
+var $=function(s,c){return (c||document).querySelector(s)}, $$=function(s,c){return Array.prototype.slice.call((c||document).querySelectorAll(s))};
+var RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+var FINE=matchMedia('(hover:hover) and (pointer:fine)').matches;
+gsap.registerPlugin(ScrollTrigger);
+
+/* ---------- aurora ribbons (canvas) ---------- */
+var ac=$('#aurora'), ax=ac.getContext('2d');
+function sizeA(){ac.width=innerWidth*devicePixelRatio;ac.height=innerHeight*devicePixelRatio;ax.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0)}
+sizeA();addEventListener('resize',sizeA);
+var ribbons=[
+  {hue:[139,123,255],amp:.16,sp:.00022,base:.32,th:.34,ph:0},
+  {hue:[255,122,184],amp:.13,sp:.00017,base:.55,th:.30,ph:2.1},
+  {hue:[232,196,107],amp:.10,sp:.00028,base:.78,th:.22,ph:4.2},
+  {hue:[123,232,255],amp:.12,sp:.00020,base:.15,th:.26,ph:1.2}
+];
+var mx=innerWidth/2,my=innerHeight/2,smx=mx,smy=my;
+addEventListener('pointermove',function(e){mx=e.clientX;my=e.clientY},{passive:true});
+function drawAurora(t){
+  ax.clearRect(0,0,innerWidth,innerHeight);
+  ax.globalCompositeOperation='lighter';
+  smx+=(mx-smx)*.03; smy+=(my-smy)*.03;
+  ribbons.forEach(function(r,i){
+    var g=ax.createLinearGradient(0,innerHeight*r.base-200,0,innerHeight*r.base+200);
+    var c='rgba('+r.hue[0]+','+r.hue[1]+','+r.hue[2];
+    g.addColorStop(0,c+',0)');g.addColorStop(.5,c+','+(r.th)+')');g.addColorStop(1,c+',0)');
+    ax.fillStyle=g;ax.beginPath();
+    var drift=(smx/innerWidth-.5)*60*(i+1)*.3;
+    for(var x=-60;x<=innerWidth+60;x+=26){
+      var y=innerHeight*r.base
+        + Math.sin(x*.0018+t*r.sp*1000+r.ph)*innerHeight*r.amp
+        + Math.cos(x*.0042+t*r.sp*640+r.ph*2)*innerHeight*r.amp*.45
+        + drift;
+      x===-60?ax.moveTo(x,y):ax.lineTo(x,y);
+    }
+    ax.lineTo(innerWidth+60,innerHeight+80);ax.lineTo(-60,innerHeight+80);ax.closePath();ax.fill();
+  });
+  ax.globalCompositeOperation='source-over';
+}
+
+/* ---------- starfield with parallax + twinkle ---------- */
+var sc=$('#stars'), sx=sc.getContext('2d'), stars=[];
+function sizeS(){
+  sc.width=innerWidth*devicePixelRatio;sc.height=innerHeight*devicePixelRatio;
+  sx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+  stars=[];var n=Math.min(180,Math.floor(innerWidth/9));
+  for(var i=0;i<n;i++)stars.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,z:.25+Math.random()*.75,r:Math.random()*1.4+.3,ph:Math.random()*6.28});
+}
+sizeS();addEventListener('resize',sizeS);
+function drawStars(t){
+  sx.clearRect(0,0,innerWidth,innerHeight);
+  var ox=(smx/innerWidth-.5),oy=(smy/innerHeight-.5);
+  stars.forEach(function(s){
+    var tw=.4+.6*Math.abs(Math.sin(t*.001+s.ph));
+    sx.globalAlpha=tw*s.z;
+    sx.fillStyle='#efe9df';
+    sx.beginPath();
+    sx.arc(s.x-ox*40*s.z,s.y-oy*40*s.z,s.r*s.z,0,6.29);sx.fill();
+  });
+  sx.globalAlpha=1;
+}
+function loop(t){
+  if(!RM){drawAurora(t);drawStars(t)}
+  else{drawAurora(0)}
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+/* ---------- preloader + hero intro ---------- */
+var ld=$('#ld');
+setTimeout(function(){
+  ld.classList.add('gone');document.body.classList.remove('lock');
+  gsap.fromTo('.hero .ln span',{yPercent:120,rotate:4},{yPercent:0,rotate:0,duration:1.4,stagger:.12,ease:'power4.out',delay:.15});
+  gsap.fromTo('.hero .rev, .scroll-hint',{opacity:0,y:40},{opacity:1,y:0,duration:1.1,stagger:.09,ease:'power3.out',delay:.6});
+},RM?200:2100);
+/* hero reveal class conflicts: .rev on h1 spans is handled above; clear others */
+gsap.set('.hero .ln span',{opacity:1});
+
+/* ---------- magnetic cursor ---------- */
+var cur=$('#cur'),cx=innerWidth/2,cy=innerHeight/2,tx=cx,ty=cy;
+addEventListener('pointermove',function(e){tx=e.clientX;ty=e.clientY},{passive:true});
+(function cLoop(){
+  cx+=(tx-cx)*.22;cy+=(ty-cy)*.22;
+  cur.style.transform='translate('+cx+'px,'+cy+'px)';
+  requestAnimationFrame(cLoop);
+})();
+document.addEventListener('pointerover',function(e){
+  if(e.target.closest&&e.target.closest('a,button,.row,.step,.frame'))cur.classList.add('hot');
+  else cur.classList.remove('hot');
+});
+
+/* ---------- marquee ribbons (two directions) ---------- */
+var words=['Websites','<em>Graphics</em>','Ads','Video','<em>Photoshoots</em>','Branding'];
+function fill(id){var el=document.getElementById(id);for(var k=0;k<2;k++)words.forEach(function(w){var s=document.createElement('span');s.innerHTML=w+'&nbsp;·&nbsp;';el.appendChild(s)})}
+fill('rb1');fill('rb2');
+var r1=$('#rb1'),r2=$('#rb2'),h1w=0,h2w=0;
+function meas(){h1w=r1.scrollWidth/2;h2w=r2.scrollWidth/2}
+meas();addEventListener('resize',meas);
+(function rbLoop(t){
+  if(h1w>0){
+    var p=t*.05;
+    r1.style.transform='translateX('+(-(p%h1w))+'px)';
+    r2.style.transform='translateX('+(-h2w+((p*1.3)%h2w))+'px)';
+  }
+  requestAnimationFrame(rbLoop);
+})(0);
+
+/* ---------- manifesto word reveal ---------- */
+var mt=$('#maniTxt');
+mt.innerHTML=mt.innerHTML.split(/(<[^>]+>)/g).map(function(part){
+  if(part.indexOf('<')===0)return part;
+  return part.split(' ').map(function(w){return w?'<span class="w">'+w+'</span>':' '}).join(' ');
+}).join('');
+var mw=$$('.w',mt);
+gsap.set(mw,{opacity:.08,y:24});
+ScrollTrigger.create({
+  trigger:mt,start:'top 85%',end:'bottom 45%',scrub:RM?false:.6,
+  onUpdate:function(self){
+    var n=Math.floor(self.progress*mw.length);
+    mw.forEach(function(w,i){
+      if(i<=n)gsap.to(w,{opacity:1,y:0,duration:.6,ease:'power3.out',overwrite:'auto'});
+    });
+  }
+});
+
+/* ---------- service rows: char split + hover glow follows pointer ---------- */
+$$('.svc .name').forEach(function(n){
+  var t=n.getAttribute('data-txt');
+  n.innerHTML=t.split('').map(function(c){return '<span class="ch">'+(c===' '?'&nbsp;':c)+'</span>'}).join('');
+  var chs=$$('.ch',n);
+  gsap.from(chs,{yPercent:110,opacity:0,duration:.9,stagger:.03,ease:'power4.out',
+    scrollTrigger:{trigger:n,start:'top 88%'}});
+  var row=n.closest('.row');
+  row.addEventListener('pointermove',function(e){
+    var r=row.getBoundingClientRect();
+    row.style.setProperty('--lx',((e.clientX-r.left)/r.width*100)+'%');
+  });
+  if(FINE){
+    row.addEventListener('pointerenter',function(){
+      gsap.to(chs,{y:-8,stagger:.012,duration:.3,ease:'power2.out',overwrite:'auto'});
+    });
+    row.addEventListener('pointerleave',function(){
+      gsap.to(chs,{y:0,stagger:.012,duration:.4,ease:'power2.out',overwrite:'auto'});
+    });
+  }
+});
+
+/* ---------- generic reveals ---------- */
+$$('.rev').forEach(function(el){
+  if(el.closest('.hero'))return;
+  gsap.fromTo(el,{opacity:0,y:60},{opacity:1,y:0,duration:1.1,ease:'power3.out',
+    scrollTrigger:{trigger:el,start:'top 88%'}});
+});
+$$('.step').forEach(function(s,i){
+  gsap.fromTo(s,{opacity:0,y:50},{opacity:1,y:0,duration:.9,delay:i*.06,ease:'power3.out',
+    scrollTrigger:{trigger:s,start:'top 90%'}});
+});
+
+/* ---------- portrait tilt + photo ---------- */
+var frame=$('#tiltFrame'),img=$('#pimg'),noimg=$('#noimg');
+['photo.png','photo.jpg','photo.jpeg','photo.webp','photo.PNG','photo.JPG'].some(function(u,i,arr){
+  var im=new Image();
+  var done=false;
+  im.onload=function(){img.src=u;img.style.display='block';noimg.style.display='none';done=true};
+  im.src=u;
+  return done;
+});
+if(FINE){
+  var orb=frame.parentElement;
+  orb.addEventListener('pointermove',function(e){
+    var r=orb.getBoundingClientRect();
+    var x=(e.clientX-r.left)/r.width-.5, y=(e.clientY-r.top)/r.height-.5;
+    gsap.to(frame,{rotateY:x*16,rotateX:-y*14,duration:.6,ease:'power2.out'});
+  });
+  orb.addEventListener('pointerleave',function(){gsap.to(frame,{rotateX:0,rotateY:0,duration:.9,ease:'elastic.out(1,.5)'})});
+}
+
+/* ---------- copy email ---------- */
+var toast=$('#toast');
+$('#cp').addEventListener('click',function(){
+  var m='uzairelahi000@gmail.com';
+  (navigator.clipboard?navigator.clipboard.writeText(m):Promise.reject()).then(function(){
+    toast.classList.add('on');setTimeout(function(){toast.classList.remove('on')},1800);
+  },function(){location.href='mailto:'+m});
+});
+
+/* ---------- smooth anchor ---------- */
+$$('a[href^="#"]').forEach(function(a){
+  a.addEventListener('click',function(e){
+    var t=document.querySelector(a.getAttribute('href'));
+    if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth'})}
+  });
+});
+})();
+</script>
+</body>
+</html>
